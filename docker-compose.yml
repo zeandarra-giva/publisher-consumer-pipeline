@@ -7,7 +7,7 @@ services:
     ports:
       - "6379:6379"
 
-  # Service 2: Redis Insight (The GUI Dashboard) - NEW ADDITION
+  # Service 2: Redis Insight (The GUI for the Queue)
   redis-insight:
     image: redis/redisinsight:latest
     ports:
@@ -23,7 +23,20 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  # Service 4: The Consumer (The Worker)
+  # Service 4: Mongo Express (The GUI for the Database) - NEW ADDITION
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      # This tells it to look for the service named "mongo"
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongo
+
+  # Service 5: The Consumer (The Worker)
   consumer:
     build: .
     command: python consumer.py
@@ -33,7 +46,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
 
-  # Service 5: The Publisher (The Trigger)
+  # Service 6: The Publisher (The Trigger)
   publisher:
     build: .
     command: python publisher.py

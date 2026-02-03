@@ -34,7 +34,8 @@ def process_articles(article_data):
 
     try:
         # Scraping
-        response=requests.get(url,timeout=10)
+        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        response=requests.get(url,headers=headers,timeout=10)
         response.raise_for_status() #raises error if bad status (404,500)
 
         soup=BeautifulSoup(response.content,'html.parser')
@@ -82,9 +83,9 @@ def run_consumer():
         if task:
             # task[1] contains the actual JSON string
             article_data = json.loads(task[1])
-            process_article(article_data)
+            process_articles(article_data)
 
-if __name__=="main":
+if __name__=="__main__":
     # Wait briefly for Redis/Mongo to spin up in Docker
     time.sleep(5)
     run_consumer()

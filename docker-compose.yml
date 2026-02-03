@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Service 1: Redis (The Queue)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  # Service 2: Redis Insight (The GUI Dashboard) - NEW ADDITION
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
+  # Service 3: MongoDB (The Database)
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # Service 4: The Consumer (The Worker)
+  consumer:
+    build: .
+    command: python consumer.py
+    depends_on:
+      - redis
+      - mongo
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  # Service 5: The Publisher (The Trigger)
+  publisher:
+    build: .
+    command: python publisher.py
+    depends_on:
+      - redis
+      - consumer
+
+volumes:
+  mongo_data:

@@ -20,7 +20,8 @@ from textblob import TextBlob
 r=redis.Redis(host='redis',port=6379,decode_responses=True)
 
 # MongoDB connection
-mongo_client=MongoClient("mongodb://mongo:27017")
+mongo_client=MongoClient("mongodb://mongo:27017/")
+# mongodb://localhost:27017/?directConnection=true
 
 db=mongo_client["news_db"]
 collection=db["articles"]
@@ -50,6 +51,7 @@ def process_articles(article_data):
         elif sentiment_score < -0.1: sentiment_label = "Negative"       
 
         # Prepare document for MongoDB
+        # Defining the schema
         document = {
             "metadata": article_data,
             "scraped_data": {

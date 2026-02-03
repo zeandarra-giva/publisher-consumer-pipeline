@@ -19,24 +19,24 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
 
-  # Service 4: Mongo Express (The GUI for the Database) - NEW ADDITION
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      # This tells it to look for the service named "mongo"
-      - ME_CONFIG_MONGODB_SERVER=mongo
-      - ME_CONFIG_MONGODB_PORT=27017
-    depends_on:
-      - mongo
+  # # Service 4: Mongo Express (The GUI for the Database) - NEW ADDITION
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     # This tells it to look for the service named "mongo"
+  #     - ME_CONFIG_MONGODB_SERVER=mongo
+  #     - ME_CONFIG_MONGODB_PORT=27017
+  #   depends_on:
+  #     - mongo
 
-  # Service 5: The Consumer (The Worker)
+  # Service 4: The Consumer (The Worker)
   consumer:
     build: .
     command: python consumer.py
@@ -46,7 +46,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
 
-  # Service 6: The Publisher (The Trigger)
+  # Service 5: The Publisher (The Trigger)
   publisher:
     build: .
     command: python publisher.py
